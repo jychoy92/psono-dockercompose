@@ -1,0 +1,67 @@
+version: '3'
+services:
+  psono-database:
+    image: postgres:13-alpine
+    container_name: psono-database
+    environment:
+      - POSTGRES_USER=psono
+      - POSTGRES_PASSWORD=xv6yFGEI<dIxw~>xv6yFGEI<dIxw~>
+    volumes:
+      - "${PWD}/psono-database:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    restart: always
+
+  psono-server:
+    image: psono/psono-server:latest
+    container_name: psono-server
+    volumes:
+      - "${PWD}/psono-server/settings.yaml:/root/.psono_server/settings.yaml"
+    links:
+      - psono-database
+    ports:
+      - "10100:80"
+    restart: always
+    depends_on:
+      - psono-database
+
+  psono-client:
+    image: psono/psono-client:latest
+    container_name: psono-client
+    volumes:
+      - "${PWD}/psono-client/config.json:/usr/share/nginx/html/config.json"
+    ports:
+      - "10101:80"
+    restart: always
+    depends_on:
+      - psono-database
+      - psono-server
+
+  psono-admin:
+    image: psono/psono-admin-client:latest
+    container_name: psono-admin
+    volumes:
+      - "${PWD}/psono-client/config.json:/usr/share/nginx/html/config.json"
+    ports:
+      - "10102:80"
+    restart: always
+    depends_on:
+      - psono-database
+      - psono-server
+
+  psono-reverse-proxy:
+    image: nginx:latest
+    container_name: psono-reverse-proxy
+    volumes:
+      - "${PWD}/psono-reverse-proxy/psono.conf:/etc/nginx/conf.d/psono.conf"
+      - "${PWD}/psono-reverse-proxy/ssl:/etc/nginx/ssl"
+    #networks:
+    #  - backend
+    #  - outside
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    depends_on:
+      - psono-database
+      - psono-server

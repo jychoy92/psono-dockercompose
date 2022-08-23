@@ -1,0 +1,14 @@
+{
+    "backend_servers": [{
+      "title": "Psono - CorpIT",
+      "url": "https://psono.citlab.sea.local/server",
+      "domain": "sea.local"
+    }],
+    "base_url": "https://psono.citlab.sea.local/",
+    "allow_custom_server": true,
+    "allow_registration": true,
+    "allow_lost_password": true,
+    "disable_download_bar": false,
+    "authentication_methods": ["AUTHKEY", "LDAP"],
+    "saml_provider": []
+  }
